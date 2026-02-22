@@ -15,6 +15,10 @@ Window :: struct {
 	handle: glfw.WindowHandle,
 }
 
+Vector2 :: [2]f32
+Vector3 :: [3]f32
+Vector4 :: [4]f32
+
 init_window :: proc(width: int, height: int, title: string) -> glfw.WindowHandle {
 	assert(cast(bool)glfw.Init())
 
