@@ -36,3 +36,27 @@ create_static_mesh :: proc(vertices: []f32) -> Mesh {
 
 	return mesh
 }
+
+destroy_mesh :: proc(mesh: ^Mesh) {
+	if mesh.VBO != 0 {
+		vbo := mesh.VBO
+		gl.DeleteBuffers(1, &vbo)
+		mesh.VBO = 0
+	}
+
+	if mesh.EBO != 0 {
+		ebo := mesh.EBO
+		gl.DeleteBuffers(1, &ebo)
+		mesh.EBO = 0
+	}
+
+	if mesh.VAO != 0 {
+		vao := mesh.VAO
+		gl.DeleteVertexArrays(1, &vao)
+		mesh.VAO = 0
+	}
+
+	mesh.vertex_count = 0
+	mesh.index_count = 0
+	mesh.indexed = false
+}

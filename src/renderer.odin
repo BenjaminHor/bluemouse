@@ -47,6 +47,14 @@ create_shader_program :: proc(vShaderPath: string, fShaderPath: string) -> u32 {
 	return shader_program
 }
 
+use_shader :: proc(program: u32) {
+	if program != 0 do gl.UseProgram(program)
+}
+
+destroy_shader_program :: proc(program: u32) {
+	if program != 0 do gl.DeleteProgram(program)
+}
+
 render_static_mesh :: proc(mesh: Mesh) {
 	gl.BindVertexArray(mesh.VAO)
 	gl.DrawArrays(gl.TRIANGLES, 0, i32(mesh.vertex_count))

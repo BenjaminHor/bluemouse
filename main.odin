@@ -1,8 +1,6 @@
 package main
 
 import "core:log"
-import gl "vendor:OpenGL"
-import "vendor:glfw"
 
 import imgui "../odin-imgui/"
 import "../odin-imgui/imgui_impl_glfw"
@@ -32,11 +30,14 @@ main :: proc() {
 	imgui_impl_opengl3.Init("#version 330")
 	defer imgui_impl_opengl3.Shutdown()
 
+	// Creating a static mesh
 	vertices := []f32{-.5, -.5, 0, 0.5, -.5, 0, 0, .5, 0}
 	triangle_mesh := bm.create_static_mesh(vertices)
+	defer bm.destroy_mesh(&triangle_mesh)
 
 	// Creating a shader program
 	shader_program := bm.create_shader_program("res/vertex_shader.glsl", "res/frag_shader.glsl")
+	defer bm.destroy_shader_program(shader_program)
 
 	for !bm.window_should_close() {
 		bm.poll_input()
@@ -44,7 +45,7 @@ main :: proc() {
 		bm.begin_frame()
 		{
 			// Render pass
-			gl.UseProgram(shader_program)
+			bm.use_shader(shader_program)
 			bm.render_static_mesh(triangle_mesh)
 
 			// == IMGUI RELATED CODE ==
