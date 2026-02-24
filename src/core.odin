@@ -12,12 +12,13 @@ Core :: struct {
 CORE: Core
 
 Window :: struct {
-	handle: glfw.WindowHandle,
+	handle:      glfw.WindowHandle,
+	clear_color: Vec4,
 }
 
-Vector2 :: [2]f32
-Vector3 :: [3]f32
-Vector4 :: [4]f32
+Vec2 :: [2]f32
+Vec3 :: [3]f32
+Vec4 :: [4]f32
 
 init_window :: proc(width: int, height: int, title: string) -> glfw.WindowHandle {
 	assert(cast(bool)glfw.Init())
@@ -41,12 +42,9 @@ init_window :: proc(width: int, height: int, title: string) -> glfw.WindowHandle
 	return window
 }
 
-destroy_window :: proc() {
-	glfw.Terminate()
-	// NOTE: calling delete out of habit but not needed here
-	// since this should be cleaned up on program exit
-	delete(glfw.GetWindowTitle(CORE.window.handle))
+shutdown_window :: proc() {
 	glfw.DestroyWindow(CORE.window.handle)
+	glfw.Terminate()
 }
 
 // Must be called after init_window
@@ -60,10 +58,22 @@ window_should_close :: proc() -> bool {
 	return bool(glfw.WindowShouldClose(CORE.window.handle))
 }
 
-clear_background :: proc(color: [4]f32) {
+window_set_clear_color :: proc(color: Vec4) {
+	CORE.window.clear_color = color
+}
+
+clear_background :: proc(color: Vec4) {
 	// Clearing display right before rendering frame
 	display_w, display_h := glfw.GetFramebufferSize(CORE.window.handle)
 	gl.Viewport(0, 0, display_w, display_h)
 	gl.ClearColor(color.r, color.g, color.b, color.a)
 	gl.Clear(gl.COLOR_BUFFER_BIT)
+}
+
+begin_frame :: proc() {
+	clear_background(CORE.window.clear_color)
+}
+
+end_frame :: proc() {
+	glfw.SwapBuffers(CORE.window.handle)
 }
